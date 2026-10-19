@@ -37,7 +37,8 @@ services:
     container_name: smsnest-api
     restart: unless-stopped
     env_file:
-      - ./.env
+      - path: ./.env
+        required: false
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
