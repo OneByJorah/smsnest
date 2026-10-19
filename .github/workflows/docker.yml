@@ -1,0 +1,26 @@
+name: Docker
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  attestations: write
+
+jobs:
+  api:
+    uses: ./.github/workflows/reusable-docker.yml
+    with:
+      context: ./api
+      dockerfile: ./api/Dockerfile
+
+  web:
+    uses: ./.github/workflows/reusable-docker.yml
+    with:
+      context: ./web
+      dockerfile: ./web/Dockerfile

@@ -1,0 +1,78 @@
+name: smsnest
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: smsnest-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-httpsms}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-smsnest-demo}
+      POSTGRES_USER: ${POSTGRES_USER:-httpsms}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5435:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - internal
+
+  redis:
+    image: redis:7-alpine
+    container_name: smsnest-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - internal
+
+  api:
+    build: ./api
+    image: ghcr.io/onebyjorah/smsnest-api:latest
+    container_name: smsnest-api
+    restart: unless-stopped
+    env_file:
+      - ./api/.env
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://127.0.0.1:8000/healthz || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - internal
+
+  web:
+    build: ./web
+    image: ghcr.io/onebyjorah/smsnest-web:latest
+    container_name: smsnest-web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      api:
+        condition: service_started
+    networks:
+      - internal
+
+networks:
+  internal:
+    name: smsnest_internal
+
+volumes:
+  postgres_data:
+    name: smsnest_postgres_data
+  redis_data:
+    name: smsnest_redis_data
