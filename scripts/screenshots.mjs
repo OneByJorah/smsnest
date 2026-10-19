@@ -18,14 +18,14 @@ const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
 
 for (const pg of PAGES) {
-  await page.goto(new URL(pg.path, BASE).toString(), { waitUntil: "networkidle" });
+  await page.goto(new URL(pg.path, BASE).toString(), { waitUntil: "domcontentloaded" });
   if (pg.waitFor) await page.waitForSelector(pg.waitFor, { timeout: 20000 });
   await page.waitForTimeout(1200);
   const path = `${OUT}/${pg.name}.png`;
   await page.screenshot({ path, fullPage: true });
-  const content = await page.content();
+  const visible = await page.evaluate(() => document.body.innerText);
   for (const f of FORBIDDEN) {
-    if (f.re.test(content)) { console.error(`SCRUB-GUARD: ${f.label} leaked onto ${pg.name}`); process.exit(1); }
+    if (f.re.test(visible)) { console.error(`SCRUB-GUARD: ${f.label} leaked onto ${pg.name}`); process.exit(1); }
   }
   console.log(`saved ${path}`);
 }

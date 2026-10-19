@@ -46,7 +46,7 @@ services:
       redis:
         condition: service_started
     healthcheck:
-      test: ["CMD-SHELL", "wget --spider -q http://127.0.0.1:8000/healthz || exit 1"]
+      test: ["CMD-SHELL", "wget --spider -q http://127.0.0.1:8000/health || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 5

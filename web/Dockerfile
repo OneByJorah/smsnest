@@ -5,10 +5,11 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
 
-# Install pnpm
-RUN npm install -g pnpm
+# Install pnpm (allow dependency build scripts: esbuild/sharp postinstall)
+RUN npm install -g pnpm@10
 
-RUN pnpm install
+RUN pnpm config set enable-pre-post-scripts true \
+ && pnpm install --dangerously-allow-all-builds
 
 COPY . .
 RUN pnpm run generate
