@@ -1,3 +1,6 @@
 # Upstream httpSMS ships these demo GCP keys in its public repo (v1.2.1) for the Docker build
 b6ecfd10ffd80cda11d6e2ad77759edb2f33f3d0:web/.env.docker:gcp-api-key:11
 b6ecfd10ffd80cda11d6e2ad77759edb2f33f3d0:web/.env.production:gcp-api-key:12
+
+# Throwaway demo RSA key generated locally for CI boots (localhost-only stack, no real GCP project)
+95b5d7065996af1baa1626cc3c8348fd84a2dde9:.env.example:private-key:23
