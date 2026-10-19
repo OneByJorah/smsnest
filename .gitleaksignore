@@ -1,0 +1,3 @@
+# Upstream httpSMS ships these demo GCP keys in its public repo (v1.2.1) for the Docker build
+b6ecfd10ffd80cda11d6e2ad77759edb2f33f3d0:web/.env.docker:gcp-api-key:***
+b6ecfd10ffd80cda11d6e2ad77759edb2f33f3d0:web/.env.production:gcp-api-key:***
